@@ -57,8 +57,34 @@ function renderTaskList() {
     taskList = [];
     return;
   }
-  taskList.forEach((task) => createTaskCard(task));
-  makeDraggable();
+  // create 3 variables that will store the element we are trying to append to.
+  const todoList = $("#to-do");
+  const inProgress = $("#in-progress");
+  const doneColumn = $("#done");
+
+  // Iterate over "tasklist" variable
+  for(let task of taskList) {
+    // task = first object in array [0]
+    if (task.status === "To-Do") {
+      todoList.append(createTaskCard(task)) 
+    }
+    else if (task.status === "in-progress") {
+      inProgress.append(createTaskCard(task))
+    }
+    else if (task.status === "done") {
+      doneColumn.append(createTaskCard(task))
+    }
+  }
+  // in this iteration, we will have if condition
+  // if task.status === "To-Do" we will append it to the correct column
+  // now use variable above for id="to-dos".append method
+  // what you append is where we pass the task
+  // now, we can have an else if {} task.status === "in progress"
+  // then take variable above refencing the "status"
+  // the next else if {} task.status === "done"
+
+  // taskList.forEach((task) => createTaskCard(task));
+  // makeDraggable();
 }
 
 //early return principle
@@ -85,6 +111,7 @@ function handleAddTask(event) {
     date: taskDueDate,
     description: taskDescription,
     id: generateTaskId(),
+    status: "To-Do",
   };
   taskList.push(newTask);
   saveTasksToLocalStorage();
@@ -101,7 +128,7 @@ function deleteTask(id) {
 // Todo: create a function to handle dropping a task into a new status lane
 //taskList is an array?
 // //FOR LOOP
-const makeDraggable = function () {
+const makeDraggable = function (event, ui) {
   const cards = document.querySelectorAll(".task-card");
   const containers = document.querySelectorAll(".cardContainer");
 
