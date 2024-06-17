@@ -102,23 +102,26 @@ function deleteTask(id) {
 //taskList is an array?
 // //FOR LOOP
 const makeDraggable = function () {
-  let draggables = document.querySelectorAll(".draggable");
-  let containers = document.querySelectorAll(".container");
+  const cards = document.querySelectorAll(".task-card");
+  const containers = document.querySelectorAll(".cardContainer");
 
-  draggables.forEach((draggable) => {
-    draggable.addEventListener("dragstart", () => {
-      draggable.classList.add("dragging");
-    });
-    draggable.addEventListener("dragend", () => {
-      draggable.classList.remove("dragging");
+  cards.forEach((card) => {
+    card.addEventListener("dragstart", function (event) {
+      event.dataTransfer.setData("text", event.target.id);
+      console.log(event);
     });
   });
 
   containers.forEach((container) => {
-    container.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      let draggable = document.querySelector(".dragging");
-      container.appendChild(draggable);
+    container.addEventListener("dragover", function (event) {
+      event.preventDefault();
+    });
+    container.addEventListener("drop", function (event) {
+      event.preventDefault();
+      // Append the dragged task card to the container
+      const cardId = event.dataTransfer.getData("text");
+      const taskCard = document.getElementById(cardId);
+      container.appendChild(taskCard);
     });
   });
 };
