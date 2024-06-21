@@ -37,12 +37,9 @@ function createTaskCard(task) {
     task.remove();
     deleteTask(cardID);
   });
-
-  // Date validation
-  const today = dayjs();
-  let reformatToday = today.format("YYYY-MM-DD");
-  if (task.date < reformatToday) {
-    alert("ENTER A VALID DATE");
+  const today = dayjs().format("YYYY-MM-DD");
+  if (task.date < today) {
+    $(`#body-${cardID}`).css("background-color", "red");
   }
   return taskCard;
 }
@@ -72,6 +69,11 @@ function renderTaskList() {
     } else if (task.status === "done") {
       doneColumn.append(createTaskCard(task));
     }
+  }
+
+  const today = dayjs().format("YYYY-MM-DD");
+  if (taskDueDate < today) {
+    $(`#body-${newTask.id}`).css("background-color", "red");
   }
 
   $(".draggable").draggable({
@@ -109,7 +111,7 @@ function handleAddTask(event) {
   const taskDueDate = $("#taskDueDate").val();
   const taskDescription = $("#taskDescription").val();
   if (
-    taskTitle.length < 5 ||
+    taskTitle.length < 1 ||
     taskDueDate.length == 0 ||
     taskDescription.length == 0
   ) {
@@ -123,18 +125,24 @@ function handleAddTask(event) {
     id: generateTaskId(),
     status: "to-do",
   };
-  taskList.push(newTask);
-  localStorage.setItem("tasks", JSON.stringify(taskList));
-  renderTaskList();
-  $("#taskTitle").val("");
-  $("#taskDueDate").val("");
-  $("#taskDescription").val("");
+  {
+    taskList.push(newTask);
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+    renderTaskList();
+    $("#taskTitle").val("");
+    $("#taskDueDate").val("");
+    $("#taskDescription").val("");
+  }
+  const today = dayjs().format("YYYY-MM-DD");
+  if (newTask.date < today) {
+    $(`#body-${newTask.id}`).css("background-color", "red");
+  }
 }
 
 // Todo: create a function to handle deleting a task
 function deleteTask(id) {
   taskList = taskList.filter((task) => task.id !== id);
-  saveTasksToLocalStorage();
+  localStorage.setItem("tasks", JSON.stringify(taskList));
   renderTaskList();
 }
 
